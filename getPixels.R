@@ -38,21 +38,21 @@ library(rgdal)
 get_pixel <- function(pixFile,imgFile,outPath){
   
   # check output path
+  if(!file.exists(outPath)){
+    dir.create(outPath)
+  }
   
   # read pixel file
+  pixel <- read.table(pixFile,sep=',')
   
   # read image file
+  image <- read.table(imgFile,sep=',',stringsAsFactors=F)
   
   # initialize output 
+  r <- array(0,c(nlayers(nrow(image),stack(image[1,3]),nrow(pixel))))
   
   # loop through images
-  fmask <- raster::as.matrix(raster(imgFile,band=fmaskBand))
-  rm(fmask)
-  rm(nir)
-  rm(red)
-  rm(viMtx)
-  rm(viRas)
-  gc()
+  
   
   # write output  
   

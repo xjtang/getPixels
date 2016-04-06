@@ -49,12 +49,28 @@ get_pixel <- function(pixFile,imgFile,outPath){
   image <- read.table(imgFile,sep=',',stringsAsFactors=F)
   
   # initialize output 
-  r <- array(0,c(nlayers(nrow(image),stack(image[1,3]),nrow(pixel))))
+  nband <- nlayers(stack(image[1,3]))
+  nimage <- nrow(image)
+  npixel <- nrow(pixel)
+  r <- array(0,c(nimage,nband+1,npixel))
   
   # loop through images
-  
+  for(i in 1:nimage){
+    # get date
+    r[i,1,] <- image[i,1]
+    # get each pixel
+    for(j in 1:nrow(pixel)){
+      # get current pixel
+      img <- stack(image[i,3])
+      r[i,2:(nband+1),j] <- getValuesBlock(img,pixel[j,1],1,pixel[j,2],1)
+    }
+  }
   
   # write output  
+  for(i in 1:npixel){
+    write.table(r[,,i],paste(outPath,'pixel_',pixel[i,1],'_',pixel[i,2],'.csv',sep=''),
+                sep=',',row.names=F,col.names=F) 
+  }
   
   # done
   return(0)

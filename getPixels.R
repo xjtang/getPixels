@@ -31,7 +31,6 @@
 # Libraries and sourcing
 library(sp)
 library(raster)
-library(rgdal)
 #--------------------------------------
 
 # main function

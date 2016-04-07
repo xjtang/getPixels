@@ -2,10 +2,29 @@
 # Version 1.0
 # Main Function
 #
-# Project: Get Pixel Time Series from Landsat Images
+# Project: Process Time Series of Individual Pixels
 # By Xiaojing Tang
-# Created On: 4/01/2016
-# Last Update: 4/01/2016
+# Created On: 4/1/2016
+# Last Update: 4/6/2016
+#
+# Usage:
+#   1.Intstall sp, raster, and rgdal before using this script
+#   2.Prepare Landsat image stacks
+#   3.Run the function with correct input arguments
+#
+# Version 1.0 - 4/6/2016
+#   This script grab time series of individual pixels from Landsat images
+# 
+# Created on Github on 4/1/2016, check Github Commits for updates afterwards.
+#----------------------------------------------------------------
+
+# Libraries and sourcing
+library(sp)
+library(raster)
+#--------------------------------------
+
+# get_pixel
+# Get time series of individual pixels from stack of images
 #
 # Input Arguments: 
 #   pixFile (String) - csv file that contains list of pixels to process
@@ -16,24 +35,10 @@
 #   r (Integer) - 0: Successful
 #
 # Usage: 
-#   1.Intstall sp, raster, and rgdal before using this script
-#   2.Prepare Landsat image stacks
-#   3.Prepare a csv file for list of images
-#   4.Prepare a csv file for list of pixels to grab
-#   5.Run script to grab pixel time series
+#   1.Prepare a csv file for list of images
+#   2.Prepare a csv file for list of pixels to grab
+#   3.Run script to grab pixel time series
 #
-# Version 1.0 - 8/27/2013
-#   This script grab time series of individual pixels from Landsat images
-# 
-# Created on Github on 4/1/2014, check Github Commits for updates afterwards.
-#----------------------------------------------------------------
-
-# Libraries and sourcing
-library(sp)
-library(raster)
-#--------------------------------------
-
-# main function
 get_pixel <- function(pixFile,imgFile,outPath){
   
   # check output path
@@ -75,3 +80,60 @@ get_pixel <- function(pixFile,imgFile,outPath){
   return(0)
 }
 #--------------------------------------
+
+# crop_pixel
+# crop a window around a pixel and create preview images
+#
+# Input Arguments: 
+#   x (Integer) - row of the pixel to crop
+#   y (Integer) - col of the pixel to crop
+
+#   imgFile (String) - csv file that contains list of images
+#   outFile (String) - path for output files
+#   cropSize (Integer) - the size of the window (pixels)
+#   comp (Vector, Integer) - composit of the output preview image
+#   stretch (Vector, Integer) - stretch of the output preview image
+#
+# Output Arguments: 
+#   r (Integer) - 0: Successful
+#
+# Usage: 
+#   1.Prepare a csv file for list of images
+#   2.Run script to create preview images
+#
+crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
+                       comp=c(3,4,5),stretch=c(0,5000)){
+  
+  # check output path
+  if(!file.exists(outPath)){
+    dir.create(outPath)
+  }
+  
+  # read image file
+  image <- read.table(imgFile,sep=',',stringsAsFactors=F)
+  
+  # initilize
+  img <- stack(image[1,3])
+  nband <- nlayers(img)
+  nline <- nrow(img)
+  nsamp <- ncol(img)
+  nimage <- nrow(image)
+  r <- array(0,c(cropSize,cropSize,nband))
+  
+  # loop through images
+  for(i in 1:nimage){
+    # calculate boundary
+    
+    # get values
+    img <- stack(image[i,3])
+    r <- getValuesBlock(img,pixel[j,1],1,pixel[j,2],1)
+    
+    # export image
+    fname <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.csv',sep='')
+    
+  }
+  
+  # done
+  
+}
+

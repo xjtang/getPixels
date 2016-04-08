@@ -51,7 +51,7 @@ get_pixel <- function(pixFile,imgFile,outPath){
   pixel <- read.table(pixFile,sep=',')
   
   # read image file
-  image <- read.table(imgFile,sep=',',stringsAsFactors=F)
+  image <- read.table(imgFile,sep=',',stringsAsFactors=F,header=T)
   
   # initialize output 
   nband <- nlayers(stack(image[1,3]))

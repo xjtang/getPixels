@@ -21,6 +21,7 @@
 # Libraries and sourcing
 library(sp)
 library(raster)
+library(rgdal)
 #--------------------------------------
 
 # get_pixel

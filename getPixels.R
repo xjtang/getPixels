@@ -122,14 +122,34 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
   
   # loop through images
   for(i in 1:nimage){
+    
     # calculate boundary
+    if(x<=cropsize){
+      x1 <- 1
+    }else if(x>=(nline-cropsize)){
+      x1 <- (nline-cropsize)
+    }else{
+      x1 <- x-floor(cropsize/2)
+    }
+    if(y<=cropsize){
+      y1 <- 1
+    }else if(y>=(nsamp-cropsize)){
+      y1 <- (nsamp-cropsize)
+    }else{
+      y1 <- y-floor(cropsize/2)
+    }
     
     # get values
     img <- stack(image[i,3])
-    r <- getValuesBlock(img,pixel[j,1],1,pixel[j,2],1)
+    r <- getValuesBlock(img,x1,cropSize,y1,cropSize)
+    
+    # finalize image
+    preview <- r[,,comp]
+    preview <- ((preview-stretch[1])/(stretch[2]-stretch[1]))*(preview>-9999)
     
     # export image
-    fname <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.csv',sep='')
+    outFile <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.csv',sep='')
+    ritePNG(preview,outFile)
     
   }
   

@@ -149,7 +149,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
     
     # export image
     outFile <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.csv',sep='')
-    ritePNG(preview,outFile)
+    writePNG(preview,outFile)
     
   }
   

@@ -18,7 +18,7 @@
 #$ -j y
 
 # Name the file where to redirect standard output and error
-#$ -o getPixels.qlog
+#$ -o cropPixels.qlog
 
 # Now let's keep track of some information just in case anything goes wrong
 
@@ -32,6 +32,7 @@ echo "Task index number : $SGE_TASK_ID"
 echo "=========================================================="
 
 # Run the bash script
+module load R_earth/3.1.0
 R --slave --vanilla --quiet --no-save  <<EEE
 source('/usr3/graduate/xjtang/Documents/getPixels/getPixels.R')
 crop_pixel($1,$2,'$3','$4',$5)

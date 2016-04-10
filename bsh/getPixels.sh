@@ -32,6 +32,7 @@ echo "Task index number : $SGE_TASK_ID"
 echo "=========================================================="
 
 # Run the bash script
+module load R_earth/3.1.0
 R --slave --vanilla --quiet --no-save  <<EEE
 source('/usr3/graduate/xjtang/Documents/getPixels/getPixels.R')
 get_pixel('$1','$2','$3')

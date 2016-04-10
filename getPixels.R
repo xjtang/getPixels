@@ -125,19 +125,19 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
   for(i in 1:nimage){
     
     # calculate boundary
-    if(x<=cropsize){
+    if(x<=cropSize){
       x1 <- 1
-    }else if(x>=(nline-cropsize)){
-      x1 <- (nline-cropsize)
+    }else if(x>=(nline-cropSize)){
+      x1 <- (nline-cropSize)
     }else{
-      x1 <- x-floor(cropsize/2)
+      x1 <- x-floor(cropSize/2)
     }
     if(y<=cropsize){
       y1 <- 1
-    }else if(y>=(nsamp-cropsize)){
-      y1 <- (nsamp-cropsize)
+    }else if(y>=(nsamp-cropSize)){
+      y1 <- (nsamp-cropSize)
     }else{
-      y1 <- y-floor(cropsize/2)
+      y1 <- y-floor(cropSize/2)
     }
     
     # get values

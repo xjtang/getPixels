@@ -119,7 +119,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
   nline <- nrow(img)
   nsamp <- ncol(img)
   nimage <- nrow(image)
-  r <- array(0,c(cropSize,cropSize,nband))
+  preview <- array(0,c(cropSize,cropSize,3))
   
   # loop through images
   for(i in 1:nimage){
@@ -145,7 +145,9 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
     r <- getValuesBlock(img,x1,cropSize,y1,cropSize)
     
     # finalize image
-    preview <- r[,,comp]
+    for(j in 1:3){
+      preview[,,j] <- matrix(r[,comp[j]],nrow=cropSize,ncol=cropSize,byrow=TRUE)
+    }
     preview <- (preview-stretch[1])/(stretch[2]-stretch[1])
     preview(preview<0) <- 0
     preview(preview>1) <- 1

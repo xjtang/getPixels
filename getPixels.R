@@ -22,6 +22,7 @@
 library(sp)
 library(raster)
 library(rgdal)
+library(png)
 #--------------------------------------
 
 # get_pixel

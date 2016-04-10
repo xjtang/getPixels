@@ -89,7 +89,6 @@ get_pixel <- function(pixFile,imgFile,outPath){
 # Input Arguments: 
 #   x (Integer) - row of the pixel to crop
 #   y (Integer) - col of the pixel to crop
-
 #   imgFile (String) - csv file that contains list of images
 #   outFile (String) - path for output files
 #   cropSize (Integer) - the size of the window (pixels)
@@ -162,4 +161,49 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
   # done
   
 }
+#--------------------------------------
 
+# batcfh_crop_pixel
+# batch crop pixels
+#
+# Input Arguments: 
+#   pixFile (String) - csv file that contains list of pixels to process
+#   imgFile (String) - csv file that contains list of images
+#   outFile (String) - path for output files
+#   cropSize (Integer) - the size of the window (pixels)
+#   comp (Vector, Integer) - composit of the output preview image
+#   stretch (Vector, Integer) - stretch of the output preview image
+#
+# Output Arguments: 
+#   r (Integer) - 0: Successful
+#
+# Usage: 
+#   1.Prepare a csv file for list of pixels
+#   1.Prepare a csv file for list of images
+#   2.Run script to create preview images
+#
+batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,
+                       comp=c(3,4,5),stretch=c(0,5000)){
+  
+  # check output path
+  if(!file.exists(outPath)){
+    dir.create(outPath)
+  }
+  
+  # read pixel file
+  pixel <- read.table(pixFile,sep=',')
+  
+  # crop each pixel
+  for(i in 1:nrow(pixel)){
+    
+    # forge output path for this pixel
+    pixelPath <- paste(outPath,'Pxl_',pixel[i,1],'_',pixel[i,2],'/',sep='')
+    
+    # crop pixel
+    crop_pixel(pixel[i,1],pixel[i,2],imgFile,pixelPath,100,c(3,4,5),c(0,5000))
+    
+  }
+  
+  # done
+  
+}

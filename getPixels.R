@@ -149,8 +149,8 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
       preview[,,j] <- matrix(r[,comp[j]],nrow=cropSize,ncol=cropSize,byrow=TRUE)
     }
     preview <- (preview-stretch[1])/(stretch[2]-stretch[1])
-    preview(preview<0) <- 0
-    preview(preview>1) <- 1
+    preview[preview<0] <- 0
+    preview[preview>1] <- 1
     
     # export image
     outFile <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.csv',sep='')

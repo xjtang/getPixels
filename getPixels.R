@@ -132,7 +132,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
     }else{
       x1 <- x-floor(cropSize/2)
     }
-    if(y<=cropsize){
+    if(y<=cropSize){
       y1 <- 1
     }else if(y>=(nsamp-cropSize)){
       y1 <- (nsamp-cropSize)

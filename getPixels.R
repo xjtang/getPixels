@@ -5,14 +5,14 @@
 # Project: Process Time Series of Individual Pixels
 # By Xiaojing Tang
 # Created On: 4/1/2016
-# Last Update: 4/6/2016
+# Last Update: 4/11/2016
 #
 # Usage:
 #   1.Intstall sp, raster, and rgdal before using this script
 #   2.Prepare Landsat image stacks
 #   3.Run the function with correct input arguments
 #
-# Version 1.0 - 4/6/2016
+# Version 1.0 - 4/11/2016
 #   This script grab time series of individual pixels from Landsat images
 # 
 # Created on Github on 4/1/2016, check Github Commits for updates afterwards.
@@ -92,6 +92,7 @@ get_pixel <- function(pixFile,imgFile,outPath){
 #   imgFile (String) - csv file that contains list of images
 #   outFile (String) - path for output files
 #   cropSize (Integer) - the size of the window (pixels)
+#   cropDate (Vector, Integer) - date range of creasting images
 #   comp (Vector, Integer) - composit of the output preview image
 #   stretch (Vector, Integer) - stretch of the output preview image
 #
@@ -102,7 +103,7 @@ get_pixel <- function(pixFile,imgFile,outPath){
 #   1.Prepare a csv file for list of images
 #   2.Run script to create preview images
 #
-crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
+crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000)
                        comp=c(3,4,5),stretch=c(0,5000)){
   
   # check output path
@@ -112,6 +113,10 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
   
   # read image file
   image <- read.table(imgFile,sep=',',stringsAsFactors=F)
+  
+  # filter image file
+  image <- image[image[,1]>=cropDate[1],]
+  image <- image[image[,1]<=cropDate[2],]
   
   # initilize
   img <- stack(image[1,3])
@@ -151,6 +156,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
     preview <- (preview-stretch[1])/(stretch[2]-stretch[1])
     preview[preview<0] <- 0
     preview[preview>1] <- 1
+    preview[floor(cropSize/2)+1,floor(cropSize/2)+1,] <- c(1,0,0)
     
     # export image
     outFile <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.png',sep='')
@@ -171,6 +177,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
 #   imgFile (String) - csv file that contains list of images
 #   outFile (String) - path for output files
 #   cropSize (Integer) - the size of the window (pixels)
+#   cropDate (Vector, Integer) - date range of creasting images
 #   comp (Vector, Integer) - composit of the output preview image
 #   stretch (Vector, Integer) - stretch of the output preview image
 #
@@ -182,7 +189,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,
 #   1.Prepare a csv file for list of images
 #   2.Run script to create preview images
 #
-batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,
+batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000)
                        comp=c(3,4,5),stretch=c(0,5000)){
   
   # check output path

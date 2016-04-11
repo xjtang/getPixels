@@ -1,6 +1,15 @@
 #!/bin/bash
 
-# Submit qsub job 
+# Submit job to crop pixel
+# Input Arguments: 
+#   -cSize crop size (optional)
+#   -cDate crop date range (optional)
+#   -comp compisot (optional)
+#   -stch stretch (optional)
+#   -f pixel file (batch)
+#   -p pixel coordinate (single process)
+#   1.Image file
+#   2.Output path
 
 # Specify which shell to use
 #$ -S /bin/bash
@@ -31,12 +40,82 @@ echo "Current job name : $JOB_NAME $1"
 echo "Task index number : $SGE_TASK_ID"
 echo "=========================================================="
 
+# parse input arguments
+cSize=100
+cDate1=1000000
+cDate2=3000000
+comp1=3
+comp2=4
+comp3=5
+stretch1=0
+stretch2=5000
+
+while [[ $# > 0 ]]; do
+
+    InArg="$1"
+    
+    case $InArg in
+        -cSize)
+            cSize=$2
+	    shift
+            ;;
+        -cDate)
+            cDate1=$2
+            cDate2=$3
+	    shift
+	    shift
+            ;;
+        -comp)
+            comp1=$2
+            comp2=$3
+            comp3=$4
+	    shift
+	    shift
+	    shift
+            ;;
+        -stch)
+            stretch1=$2
+            stretch2=$3
+	    shift
+	    shift
+            ;;
+	-f)
+	    FUNC=batch
+            cFile=$2
+	    shift
+            ;;
+        -p)
+	    FUNC=single
+            cPixel1=$2
+            cPixel2=$3
+	    shift
+	    shift
+            ;;
+        *)
+            iFile=$1
+            oPath=$2
+            break
+    esac
+
+    shift
+
+done
+
+if [ $FUNC = "single" ]; then
+    echo 'crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'))'
+elif [ $FUNC = "batch" ]; then
+    echo 'batch_crop_pixel('$cFile',"'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'))'
+else
+    echo 'unknown option'
+fi
+
+
 # Run the bash script
-module load R_earth/3.1.0
-R --slave --vanilla --quiet --no-save  <<EEE
-source('/usr3/graduate/xjtang/Documents/getPixels/getPixels.R')
-crop_pixel($1,$2,'$3','$4',$5)
-EEE
+#module load R_earth/3.1.0
+#R --slave --vanilla --quiet --no-save  <<EEE
+#source('/usr3/graduate/xjtang/Documents/getPixels/getPixels.R')
+#crop_pixel($1,$2,'$3','$4',$5)
+#EEE
 
 echo "=========================================================="
 echo "Finished on : $(date)"

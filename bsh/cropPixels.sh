@@ -36,7 +36,7 @@ echo "Starting on : $(date)"
 echo "Running on node : $(hostname)"
 echo "Current directory : $(pwd)"
 echo "Current job ID : $JOB_ID"
-echo "Current job name : $JOB_NAME $1"
+echo "Current job name : $JOB_NAME cropPixles"
 echo "Task index number : $SGE_TASK_ID"
 echo "=========================================================="
 
@@ -102,20 +102,20 @@ while [[ $# > 0 ]]; do
 done
 
 if [ $FUNC = "single" ]; then
-    echo 'crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'))'
+    COMMAND='crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'))'
 elif [ $FUNC = "batch" ]; then
-    echo 'batch_crop_pixel('$cFile',"'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'))'
+    COMMAND='batch_crop_pixel("'$cFile'","'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'))'
 else
     echo 'unknown option'
 fi
 
 
 # Run the bash script
-#module load R_earth/3.1.0
-#R --slave --vanilla --quiet --no-save  <<EEE
-#source('/usr3/graduate/xjtang/Documents/getPixels/getPixels.R')
-#crop_pixel($1,$2,'$3','$4',$5)
-#EEE
+module load R_earth/3.1.0
+R --slave --vanilla --quiet --no-save  <<EEE
+source('/usr3/graduate/xjtang/Documents/getPixels/getPixels.R')
+$COMMAND
+EEE
 
 echo "=========================================================="
 echo "Finished on : $(date)"

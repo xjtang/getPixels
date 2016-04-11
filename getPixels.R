@@ -103,7 +103,7 @@ get_pixel <- function(pixFile,imgFile,outPath){
 #   1.Prepare a csv file for list of images
 #   2.Run script to create preview images
 #
-crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000)
+crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
                        comp=c(3,4,5),stretch=c(0,5000)){
   
   # check output path
@@ -189,7 +189,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
 #   1.Prepare a csv file for list of images
 #   2.Run script to create preview images
 #
-batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000)
+batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
                        comp=c(3,4,5),stretch=c(0,5000)){
   
   # check output path

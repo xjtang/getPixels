@@ -104,7 +104,7 @@ get_pixel <- function(pxlFile,imgFile,outPath){
 #   2.Run script to create preview images
 #
 crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
-                       comp=c(3,4,5),stretch=c(0,5000)){
+                       comp=c(5,4,3),stretch=c(0,5000)){
   
   # check output path
   if(!file.exists(outPath)){
@@ -156,7 +156,12 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
     preview <- (preview-stretch[1])/(stretch[2]-stretch[1])
     preview[preview<0] <- 0
     preview[preview>1] <- 1
-    preview[floor(cropSize/2)+1,floor(cropSize/2)+1,] <- c(1,0,0)
+    
+    # mark the pixel
+    # preview[floor(cropSize/2)+1,floor(cropSize/2)+1,] <- c(1,0,0)
+    center <- floor(cropSize/2)+1
+    preview[c(center-7,center+7),(center-7):(center+7),] <- c(1,0,0)
+    preview[(center-7):(center+7),c(center-7,center+7),] <- c(1,0,0)
     
     # export image
     outFile <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.png',sep='')
@@ -190,7 +195,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
 #   3.Run script to create preview images
 #
 batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
-                       comp=c(3,4,5),stretch=c(0,5000)){
+                       comp=c(5,4,3),stretch=c(0,5000)){
   
   # check output path
   if(!file.exists(outPath)){

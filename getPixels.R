@@ -160,8 +160,8 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
     # mark the pixel
     # preview[floor(cropSize/2)+1,floor(cropSize/2)+1,] <- c(1,0,0)
     center <- floor(cropSize/2)+1
-    preview[c(center-7,center+7),(center-7):(center+7),] <- c(1,0,0)
-    preview[(center-7):(center+7),c(center-7,center+7),] <- c(1,0,0)
+    preview[c(center-7,center+7),(center-7):(center+7),] <- t(c(1,0,0))
+    preview[(center-7):(center+7),c(center-7,center+7),] <- t(c(1,0,0))
     
     # export image
     outFile <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.png',sep='')

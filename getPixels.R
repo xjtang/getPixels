@@ -214,7 +214,7 @@ batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(100
     pixelPath <- paste(outPath,'Pxl_',pixel[i,1],'_',pixel[i,2],'/',sep='')
     
     # crop pixel
-    crop_pixel(pixel[i,1],pixel[i,2],imgFile,pixelPath,100,c(3,4,5),c(0,5000))
+    crop_pixel(pixel[i,1],pixel[i,2],imgFile,pixelPath,cropSize,cropDate,comp,stretch)
     
   }
   

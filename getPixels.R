@@ -211,10 +211,10 @@ batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(100
   for(i in 1:nrow(pixel)){
     
     # forge output path for this pixel
-    pixelPath <- paste(outPath,'Pxl_',pixel[i,1],'_',pixel[i,2],'/',sep='')
+    pixelPath <- paste(outPath,'Pxl_',pixel[i,1],'_',pixel[i,2],'_',pixel[i,3],'/',sep='')
     
     # crop pixel
-    crop_pixel(pixel[i,1],pixel[i,2],imgFile,pixelPath,cropSize,cropDate,comp,stretch)
+    crop_pixel(pixel[i,2],pixel[i,3],imgFile,pixelPath,cropSize,cropDate,comp,stretch)
     
   }
   

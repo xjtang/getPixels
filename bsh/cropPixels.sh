@@ -109,6 +109,7 @@ else
     echo 'unknown option'
 fi
 
+echo $COMMAND
 
 # Run the bash script
 module load R_earth/3.1.0

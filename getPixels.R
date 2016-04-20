@@ -251,7 +251,11 @@ locate_pixel <- function(pxlFile,outFile,UTM,UL,res=30){
   # loop through pixel
   for(i in 1:nrow(pixel)){
     r[i,1] <- pixel[i,'ID']
-    coor <- deg2utm(pixel[i,'LAT'],pixel[i,'LON'],UTM)
+    if(UTM==0){
+      coor <- c(pixel[i,'X'],pixel[i,'Y'])
+    }else{
+      coor <- deg2utm(pixel[i,'LAT'],pixel[i,'LON'],UTM)
+    }
     r[i,3] <- ceiling((coor[1]-UL[1])/res)
     r[i,2] <- ceiling((UL[2]-coor[2])/res)
   }

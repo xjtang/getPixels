@@ -161,10 +161,14 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
     # preview[floor(cropSize/2)+1,floor(cropSize/2)+1,] <- c(1,0,0)
     if(mark){
       center <- floor(cropSize/2)+1
-      preview[c(center-7,center+7),(center-7):(center+7),1] <- 1
-      preview[(center-7):(center+7),c(center-7,center+7),1] <- 1
-      preview[c(center-7,center+7),(center-7):(center+7),2:3] <- 0
-      preview[(center-7):(center+7),c(center-7,center+7),2:3] <- 0
+      if(cropSize>=100){
+        preview[c(center-7,center+7),(center-7):(center+7),1] <- 1
+        preview[(center-7):(center+7),c(center-7,center+7),1] <- 1
+        preview[c(center-7,center+7),(center-7):(center+7),2:3] <- 0
+        preview[(center-7):(center+7),c(center-7,center+7),2:3] <- 0
+      }else{
+        preview[center,center,] <- c(1,0,0)
+      }
     }
     
     # export image

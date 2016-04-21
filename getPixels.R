@@ -5,14 +5,14 @@
 # Project: Process Time Series of Individual Pixels
 # By Xiaojing Tang
 # Created On: 4/1/2016
-# Last Update: 4/17/2016
+# Last Update: 4/20/2016
 #
 # Usage:
 #   1.Intstall sp, raster, and rgdal before using this script
 #   2.Prepare Landsat image stacks
 #   3.Run the function with correct input arguments
 #
-# Version 1.0 - 4/17/2016
+# Version 1.0 - 4/20/2016
 #   This script grab time series of individual pixels from Landsat images
 # 
 # Created on Github on 4/1/2016, check Github Commits for updates afterwards.
@@ -104,7 +104,7 @@ get_pixel <- function(pxlFile,imgFile,outPath){
 #   2.Run script to create preview images
 #
 crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
-                       comp=c(5,4,3),stretch=c(0,5000)){
+                       comp=c(5,4,3),stretch=c(0,5000),mark=T){
   
   # check output path
   if(!file.exists(outPath)){
@@ -159,11 +159,13 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
     
     # mark the pixel
     # preview[floor(cropSize/2)+1,floor(cropSize/2)+1,] <- c(1,0,0)
-    center <- floor(cropSize/2)+1
-    preview[c(center-7,center+7),(center-7):(center+7),1] <- 1
-    preview[(center-7):(center+7),c(center-7,center+7),1] <- 1
-    preview[c(center-7,center+7),(center-7):(center+7),2:3] <- 0
-    preview[(center-7):(center+7),c(center-7,center+7),2:3] <- 0
+    if(mark){
+      center <- floor(cropSize/2)+1
+      preview[c(center-7,center+7),(center-7):(center+7),1] <- 1
+      preview[(center-7):(center+7),c(center-7,center+7),1] <- 1
+      preview[c(center-7,center+7),(center-7):(center+7),2:3] <- 0
+      preview[(center-7):(center+7),c(center-7,center+7),2:3] <- 0
+    }
     
     # export image
     outFile <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.png',sep='')
@@ -197,7 +199,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
 #   3.Run script to create preview images
 #
 batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
-                       comp=c(5,4,3),stretch=c(0,5000)){
+                       comp=c(5,4,3),stretch=c(0,5000),mark=T){
   
   # check output path
   if(!file.exists(outPath)){
@@ -214,7 +216,7 @@ batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(100
     pixelPath <- paste(outPath,'Pxl_',pixel[i,1],'_',pixel[i,2],'_',pixel[i,3],'/',sep='')
     
     # crop pixel
-    crop_pixel(pixel[i,2],pixel[i,3],imgFile,pixelPath,cropSize,cropDate,comp,stretch)
+    crop_pixel(pixel[i,2],pixel[i,3],imgFile,pixelPath,cropSize,cropDate,comp,stretch,mark)
     
   }
   

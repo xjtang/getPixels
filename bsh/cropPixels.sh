@@ -49,64 +49,68 @@ comp2=4
 comp3=3
 stretch1=0
 stretch2=5000
+mark=T
 
 while [[ $# > 0 ]]; do
 
-    InArg="$1"
-    
-    case $InArg in
-        -cSize)
-            cSize=$2
-	    shift
-            ;;
-        -cDate)
-            cDate1=$2
-            cDate2=$3
-	    shift
-	    shift
-            ;;
-        -comp)
-            comp1=$2
-            comp2=$3
-            comp3=$4
-	    shift
-	    shift
-	    shift
-            ;;
-        -stch)
-            stretch1=$2
-            stretch2=$3
-	    shift
-	    shift
-            ;;
-	-f)
-	    FUNC=batch
-            cFile=$2
-	    shift
-            ;;
-        -p)
-	    FUNC=single
-            cPixel1=$2
-            cPixel2=$3
-	    shift
-	    shift
-            ;;
-        *)
-            iFile=$1
-            oPath=$2
-            break
-    esac
+	InArg="$1"
 
-    shift
+	case $InArg in
+		-cSize)
+			cSize=$2
+			shift
+			;;
+		-cDate)
+			cDate1=$2
+			cDate2=$3
+			shift
+			shift
+			;;
+		-comp)
+			comp1=$2
+			comp2=$3
+			comp3=$4
+			shift
+			shift
+			shift
+			;;
+		-stch)
+			stretch1=$2
+			stretch2=$3
+			shift
+			shift
+			;;
+		-d)
+			mark=$2
+			shift
+		-f)
+			FUNC=batch
+			cFile=$2
+			shift
+			;;
+		-p)
+			FUNC=single
+			cPixel1=$2
+			cPixel2=$3
+			shift
+			shift
+			;;
+		*)
+			iFile=$1
+			oPath=$2
+			break
+		esac
+
+		shift
 
 done
 
 if [ $FUNC = "single" ]; then
-    COMMAND='crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'))'
+		COMMAND='crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark')'
 elif [ $FUNC = "batch" ]; then
-    COMMAND='batch_crop_pixel("'$cFile'","'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'))'
+		COMMAND='batch_crop_pixel("'$cFile'","'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark')'
 else
-    echo 'unknown option'
+		echo 'unknown option'
 fi
 
 echo $COMMAND

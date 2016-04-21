@@ -2,10 +2,10 @@
 
 # Submit job to crop pixel
 # Input Arguments: 
-#   -cSize crop size (optional)
-#   -cDate crop date range (optional)
-#   -comp compisot (optional)
-#   -stch stretch (optional)
+#		-cSize crop size (optional)
+#		-cDate crop date range (optional)
+#		-comp compisot (optional)
+#		-stch stretch (optional)
 #		-noMark do not mark the pixel (optional)
 #		-mask use mask filter (optional)
 #		-job jobs (optional)
@@ -88,8 +88,7 @@ while [[ $# > 0 ]]; do
 			shift
 			;;
 		-noMark)
-			mark=$2
-			shift
+			mark=F
 			;;
 		-mask)
 			maskBand=$2

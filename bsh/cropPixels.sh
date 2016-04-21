@@ -83,6 +83,7 @@ while [[ $# > 0 ]]; do
 		-d)
 			mark=$2
 			shift
+			;;
 		-f)
 			FUNC=batch
 			cFile=$2

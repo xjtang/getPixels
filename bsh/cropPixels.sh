@@ -9,10 +9,10 @@
 #		-noMark do not mark the pixel (optional)
 #		-mask use mask filter (optional)
 #		-job jobs (optional)
-#   -f pixel file (batch)
-#   -p pixel coordinate (single process)
-#   1.Image file
-#   2.Output path
+#		-f pixel file (batch)
+#		-p pixel coordinate (single process)
+#		1.Image file
+#		2.Output path
 
 # Specify which shell to use
 #$ -S /bin/bash

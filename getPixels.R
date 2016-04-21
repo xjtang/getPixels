@@ -104,7 +104,7 @@ get_pixel <- function(pxlFile,imgFile,outPath){
 #   2.Run script to create preview images
 #
 crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
-                       comp=c(5,4,3),stretch=c(0,5000),mark=T){
+                       comp=c(5,4,3),stretch=c(0,5000),mark=T,maskBand=0,maskValue=0){
   
   # check output path
   if(!file.exists(outPath)){
@@ -148,6 +148,12 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
     # get values
     img <- stack(image[i,3])
     r <- getValuesBlock(img,x1,cropSize,y1,cropSize)
+    
+    # check cloud mask
+    if(maskBand>0){
+      cloud <- (sum(r[,,maskBand]==maskValue))/(cropSize^2)
+      if(cloud>=0.8){next}
+    }
     
     # finalize image
     for(j in 1:3){
@@ -203,7 +209,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
 #   3.Run script to create preview images
 #
 batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
-                       comp=c(5,4,3),stretch=c(0,5000),mark=T){
+                       comp=c(5,4,3),stretch=c(0,5000),mark=T,maskBand=0,maskValue=0,job=c(1,1)){
   
   # check output path
   if(!file.exists(outPath)){
@@ -213,6 +219,9 @@ batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(100
   # read pixel file
   pixel <- read.table(pxlFile,sep=',')
   
+  # subset work load
+  if(job[1]>1){pixel<-pixel[seq(job[2],nrow(pixel),job[1]),]}
+  
   # crop each pixel
   for(i in 1:nrow(pixel)){
     
@@ -220,7 +229,7 @@ batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(100
     pixelPath <- paste(outPath,'Pxl_',pixel[i,1],'_',pixel[i,2],'_',pixel[i,3],'/',sep='')
     
     # crop pixel
-    crop_pixel(pixel[i,2],pixel[i,3],imgFile,pixelPath,cropSize,cropDate,comp,stretch,mark)
+    crop_pixel(pixel[i,2],pixel[i,3],imgFile,pixelPath,cropSize,cropDate,comp,stretch,mark,maskBand,maskValue)
     
   }
   

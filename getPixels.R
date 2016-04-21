@@ -151,7 +151,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
     
     # check cloud mask
     if(maskBand>0){
-      cloud <- (sum(r[,,maskBand]==maskValue))/(cropSize^2)
+      cloud <- (sum(r[,maskBand]==maskValue))/(cropSize^2)
       if(cloud>=0.8){next}
     }
     

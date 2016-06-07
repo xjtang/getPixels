@@ -1,11 +1,11 @@
 # getPixels.R
-# Version 1.0
+# Version 1.1
 # Main Function
 #
 # Project: Process Time Series of Individual Pixels
 # By Xiaojing Tang
 # Created On: 4/1/2016
-# Last Update: 4/20/2016
+# Last Update: 6/7/2016
 #
 # Usage:
 #   1.Intstall sp, raster, and rgdal before using this script
@@ -14,6 +14,10 @@
 #
 # Version 1.0 - 4/20/2016
 #   This script grab time series of individual pixels from Landsat images
+#
+# Version 1.1 - 6/7/2016
+#   1.Added support for overlaying result layers on top of images.
+#   2.Bug fix.
 # 
 # Created on Github on 4/1/2016, check Github Commits for updates afterwards.
 #----------------------------------------------------------------
@@ -194,7 +198,8 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
 # Input Arguments: 
 #   pxlFile (String) - csv file that contains list of pixels to process
 #   imgFile (String) - csv file that contains list of images
-#   outFile (String) - path for output files
+#   resFile (String) - result file
+#   outPath (String) - path for output files
 #   cropSize (Integer) - the size of the window (pixels)
 #   cropDate (Vector, Integer) - date range of creasting images
 #   comp (Vector, Integer) - composit of the output preview image
@@ -208,7 +213,7 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
 #   2.Prepare a csv file for list of images
 #   3.Run script to create preview images
 #
-batch_crop_pixel <- function(pxlFile,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
+batch_crop_pixel <- function(pxlFile,imgFile,resFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
                        comp=c(5,4,3),stretch=c(0,5000),mark=T,maskBand=0,maskValue=0,job=c(1,1)){
   
   # check output path

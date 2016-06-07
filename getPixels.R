@@ -18,7 +18,7 @@
 # Version 1.1 - 6/7/2016
 #   1.Added support for overlaying result layers on top of images.
 #   2.Bug fix.
-# 
+#
 # Created on Github on 4/1/2016, check Github Commits for updates afterwards.
 #----------------------------------------------------------------
 
@@ -32,38 +32,38 @@ library(png)
 # get_pixel
 # Get time series of individual pixels from stack of images
 #
-# Input Arguments: 
+# Input Arguments:
 #   pxlFile (String) - csv file that contains list of pixels to process
 #   imgFile (String) - csv file that contains list of images
 #   outFile (String) - path for output files
 #
-# Output Arguments: 
+# Output Arguments:
 #   r (Integer) - 0: Successful
 #
-# Usage: 
+# Usage:
 #   1.Prepare a csv file for list of images
 #   2.Prepare a csv file for list of pixels to grab
 #   3.Run script to grab pixel time series
 #
 get_pixel <- function(pxlFile,imgFile,outPath){
-  
+
   # check output path
   if(!file.exists(outPath)){
     dir.create(outPath)
   }
-  
+
   # read pixel file
   pixel <- read.table(pxlFile,sep=',')
-  
+
   # read image file
   image <- read.table(imgFile,sep=',',stringsAsFactors=F,header=T)
-  
-  # initialize output 
+
+  # initialize output
   nband <- nlayers(stack(image[1,3]))
   nimage <- nrow(image)
   npixel <- nrow(pixel)
   r <- array(0,c(nimage,nband+1,npixel))
-  
+
   # loop through images
   for(i in 1:nimage){
     # get date
@@ -75,13 +75,13 @@ get_pixel <- function(pxlFile,imgFile,outPath){
       r[i,2:(nband+1),j] <- getValuesBlock(img,pixel[j,1],1,pixel[j,2],1)
     }
   }
-  
-  # write output  
+
+  # write output
   for(i in 1:npixel){
     write.table(r[,,i],paste(outPath,'pixel_',pixel[i,1],'_',pixel[i,2],'.csv',sep=''),
-                sep=',',row.names=F,col.names=F) 
+                sep=',',row.names=F,col.names=F)
   }
-  
+
   # done
   return(0)
 }
@@ -90,38 +90,39 @@ get_pixel <- function(pxlFile,imgFile,outPath){
 # crop_pixel
 # crop a window around a pixel and create preview images
 #
-# Input Arguments: 
+# Input Arguments:
 #   x (Integer) - row of the pixel to crop
 #   y (Integer) - col of the pixel to crop
 #   imgFile (String) - csv file that contains list of images
+#   resFile (String) - result file
 #   outFile (String) - path for output files
 #   cropSize (Integer) - the size of the window (pixels)
 #   cropDate (Vector, Integer) - date range of creasting images
 #   comp (Vector, Integer) - composit of the output preview image
 #   stretch (Vector, Integer) - stretch of the output preview image
 #
-# Output Arguments: 
+# Output Arguments:
 #   r (Integer) - 0: Successful
 #
-# Usage: 
+# Usage:
 #   1.Prepare a csv file for list of images
 #   2.Run script to create preview images
 #
-crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
+crop_pixel <- function(x,y,imgFile,resFile='NA',outPath,cropSize=100,cropDate=c(1000000,3000000),
                        comp=c(5,4,3),stretch=c(0,5000),mark=T,maskBand=0,maskValue=0){
-  
+
   # check output path
   if(!file.exists(outPath)){
     dir.create(outPath)
   }
-  
+
   # read image file
   image <- read.table(imgFile,sep=',',stringsAsFactors=F,header=T)
-  
+
   # filter image file
   image <- image[image[,1]>=cropDate[1],]
   image <- image[image[,1]<=cropDate[2],]
-  
+
   # initilize
   img <- stack(image[1,3])
   nband <- nlayers(img)
@@ -129,10 +130,10 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
   nsamp <- ncol(img)
   nimage <- nrow(image)
   preview <- array(0,c(cropSize,cropSize,3))
-  
+
   # loop through images
   for(i in 1:nimage){
-    
+
     # calculate boundary
     if(x<=cropSize){
       x1 <- 1
@@ -148,17 +149,17 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
     }else{
       y1 <- y-floor(cropSize/2)
     }
-    
+
     # get values
     img <- stack(image[i,3])
     r <- getValuesBlock(img,x1,cropSize,y1,cropSize)
-    
+
     # check cloud mask
     if(maskBand>0){
       cloud <- (sum(r[,maskBand]==maskValue))/(cropSize^2)
       if(cloud>=0.8){next}
     }
-    
+
     # finalize image
     for(j in 1:3){
       preview[,,j] <- matrix(r[,comp[j]],nrow=cropSize,ncol=cropSize,byrow=TRUE)
@@ -166,6 +167,12 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
     preview <- (preview-stretch[1])/(stretch[2]-stretch[1])
     preview[preview<0] <- 0
     preview[preview>1] <- 1
+
+    # add result
+    if(!(resFile=='NA')){
+      resImg <- stack(resFile)
+      resBlock <- getValuesBlock(resImg,x1,cropSize,y1,cropSize)
+    }
     
     # mark the pixel
     # preview[floor(cropSize/2)+1,floor(cropSize/2)+1,] <- c(1,0,0)
@@ -180,22 +187,22 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
         preview[center,center,] <- c(1,0,0)
       }
     }
-    
+
     # export image
     outFile <- paste(outPath,'Pxl_',x,'_',y,'_',image[i,1],'.png',sep='')
     writePNG(preview,outFile)
-    
+
   }
-  
+
   # done
-  
+
 }
 #--------------------------------------
 
-# batcfh_crop_pixel
+# batch_crop_pixel
 # batch crop pixels
 #
-# Input Arguments: 
+# Input Arguments:
 #   pxlFile (String) - csv file that contains list of pixels to process
 #   imgFile (String) - csv file that contains list of images
 #   resFile (String) - result file
@@ -205,69 +212,69 @@ crop_pixel <- function(x,y,imgFile,outPath,cropSize=100,cropDate=c(1000000,30000
 #   comp (Vector, Integer) - composit of the output preview image
 #   stretch (Vector, Integer) - stretch of the output preview image
 #
-# Output Arguments: 
+# Output Arguments:
 #   r (Integer) - 0: Successful
 #
-# Usage: 
+# Usage:
 #   1.Prepare a csv file for list of pixels
 #   2.Prepare a csv file for list of images
 #   3.Run script to create preview images
 #
-batch_crop_pixel <- function(pxlFile,imgFile,resFile,outPath,cropSize=100,cropDate=c(1000000,3000000),
+batch_crop_pixel <- function(pxlFile,imgFile,resFile='NA',outPath,cropSize=100,cropDate=c(1000000,3000000),
                        comp=c(5,4,3),stretch=c(0,5000),mark=T,maskBand=0,maskValue=0,job=c(1,1)){
-  
+
   # check output path
   if(!file.exists(outPath)){
     dir.create(outPath)
   }
-  
+
   # read pixel file
   pixel <- read.table(pxlFile,sep=',')
-  
+
   # subset work load
   if(job[1]>1){pixel<-pixel[seq(job[2],nrow(pixel),job[1]),]}
-  
+
   # crop each pixel
   for(i in 1:nrow(pixel)){
-    
+
     # forge output path for this pixel
     pixelPath <- paste(outPath,'Pxl_',pixel[i,1],'_',pixel[i,2],'_',pixel[i,3],'/',sep='')
-    
+
     # crop pixel
-    crop_pixel(pixel[i,2],pixel[i,3],imgFile,pixelPath,cropSize,cropDate,comp,stretch,mark,maskBand,maskValue)
-    
+    crop_pixel(pixel[i,2],pixel[i,3],imgFile,resFile,pixelPath,cropSize,cropDate,comp,stretch,mark,maskBand,maskValue)
+
   }
-  
+
   # done
-  
+
 }
 #--------------------------------------
 
 # locate_pixel
 # locate pixel in landsat image
 #
-# Input Arguments: 
+# Input Arguments:
 #   pxlFile (String) - csv file that contains list of pixels to process
 #   outFile (String) - path for output files
 #   UTM (Integer) - UTM zone (negative for south)
 #   UL (Vector, Integer) - upper left corner coordinate
 #   res (Integer) - resolution
 #
-# Output Arguments: 
+# Output Arguments:
 #   r (Integer) - 0: Successful
 #
-# Usage: 
+# Usage:
 #   1.Prepare a csv file for list of pixels
 #   2.Run script to locate pixel in landsat image
 #
 locate_pixel <- function(pxlFile,outFile,UTM,UL,res=30){
-  
+
   # read pixel file
   pixel <- read.table(pxlFile,sep=',',stringsAsFactors=F,header=T)
-  
+
   # initialize
   r <- matrix(0,nrow(pixel),3)
-  
+
   # loop through pixel
   for(i in 1:nrow(pixel)){
     r[i,1] <- pixel[i,'ID']
@@ -279,12 +286,12 @@ locate_pixel <- function(pxlFile,outFile,UTM,UL,res=30){
     r[i,3] <- ceiling((coor[1]-UL[1])/res)
     r[i,2] <- ceiling((UL[2]-coor[2])/res)
   }
-  
+
   # export result
-  write.table(r,outFile,sep=',',row.names=F,col.names=F) 
-  
+  write.table(r,outFile,sep=',',row.names=F,col.names=F)
+
   # done
-  
+
 }
 #----------------------------------------------------------------
 
@@ -331,4 +338,3 @@ rad2deg <- function(x){
   return(x/pi*180)
 }
 #--------------------------------------
-

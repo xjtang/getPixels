@@ -10,6 +10,7 @@
 #		-mask use mask filter (optional)
 #		-job jobs (optional)
 #		-f pixel file (batch)
+#		-r result file (optional)
 #		-p pixel coordinate (single process)
 #		1.Image file
 #		2.Output path
@@ -57,6 +58,7 @@ maskBand=0
 maskValue=0
 njob=1
 thisjob=1
+resfile=NA
 
 while [[ $# > 0 ]]; do
 
@@ -107,6 +109,10 @@ while [[ $# > 0 ]]; do
 			cFile=$2
 			shift
 			;;
+		-r)
+			resFile=$2
+			shift
+			;;
 		-p)
 			FUNC=single
 			cPixel1=$2
@@ -125,9 +131,9 @@ while [[ $# > 0 ]]; do
 done
 
 if [ $FUNC = "single" ]; then
-		COMMAND='crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark','$maskBand','$maskValue')'
+		COMMAND='crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$resFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark','$maskBand','$maskValue')'
 elif [ $FUNC = "batch" ]; then
-		COMMAND='batch_crop_pixel("'$cFile'","'$iFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark','$maskBand','$maskValue',c('$njob','$thisjob'))'
+		COMMAND='batch_crop_pixel("'$cFile'","'$iFile'","'$resFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark','$maskBand','$maskValue',c('$njob','$thisjob'))'
 else
 		echo 'unknown option'
 fi

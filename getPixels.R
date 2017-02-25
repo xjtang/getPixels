@@ -5,7 +5,7 @@
 # Project: Process Time Series of Individual Pixels
 # By Xiaojing Tang
 # Created On: 4/1/2016
-# Last Update: 6/7/2016
+# Last Update: 2/25/2017
 #
 # Usage:
 #   1.Intstall sp, raster, and rgdal before using this script
@@ -15,7 +15,7 @@
 # Version 1.0 - 4/20/2016
 #   This script grab time series of individual pixels from Landsat images
 #
-# Version 1.1 - 6/7/2016
+# Version 1.1 - 2/25/2017
 #   1.Added support for overlaying result layers on top of images.
 #   2.Bug fix.
 #
@@ -100,6 +100,10 @@ get_pixel <- function(pxlFile,imgFile,outPath){
 #   cropDate (Vector, Integer) - date range of creasting images
 #   comp (Vector, Integer) - composit of the output preview image
 #   stretch (Vector, Integer) - stretch of the output preview image
+#   mark (Boolean) - mark the center pixel or not
+#   markSize (Integer) - size of mark
+#   maskBand (Integer) - mask band id
+#   maskValue (Integer) - value to mask
 #
 # Output Arguments:
 #   r (Integer) - 0: Successful
@@ -109,7 +113,7 @@ get_pixel <- function(pxlFile,imgFile,outPath){
 #   2.Run script to create preview images
 #
 crop_pixel <- function(x,y,imgFile,resFile='NA',outPath,cropSize=100,cropDate=c(1000000,3000000),
-                       comp=c(5,4,3),stretch=c(0,5000),mark=T,maskBand=0,maskValue=0){
+                       comp=c(5,4,3),stretch=c(0,5000),mark=T,markSize=7,maskBand=0,maskValue=0){
 
   # check output path
   if(!file.exists(outPath)){
@@ -172,17 +176,25 @@ crop_pixel <- function(x,y,imgFile,resFile='NA',outPath,cropSize=100,cropDate=c(
     if(!(resFile=='NA')){
       resImg <- stack(resFile)
       resBlock <- getValuesBlock(resImg,x1,cropSize,y1,cropSize)
+      for(j in 1:cropSize){
+        for(k in 1:cropSize){
+          if((resBlock[j,k]>0)&(resBlock[j,k]<=image[i,1])){
+            preview[j,k,] <- c(1,0,0)
+          }
+        }
+      }
+
     }
-    
+
     # mark the pixel
     # preview[floor(cropSize/2)+1,floor(cropSize/2)+1,] <- c(1,0,0)
     if(mark){
       center <- floor(cropSize/2)+1
       if(cropSize>=100){
-        preview[c(center-7,center+7),(center-7):(center+7),1] <- 1
-        preview[(center-7):(center+7),c(center-7,center+7),1] <- 1
-        preview[c(center-7,center+7),(center-7):(center+7),2:3] <- 0
-        preview[(center-7):(center+7),c(center-7,center+7),2:3] <- 0
+        preview[c(center-markSize,center+markSize),(center-markSize):(center+markSize),1] <- 1
+        preview[(center-markSize):(center+markSize),c(center-markSize,center+markSize),1] <- 1
+        preview[c(center-markSize,center+markSize),(center-markSize):(center+markSize),2:3] <- 0
+        preview[(center-markSize):(center+markSize),c(center-markSize,center+markSize),2:3] <- 0
       }else{
         preview[center,center,] <- c(1,0,0)
       }
@@ -211,6 +223,10 @@ crop_pixel <- function(x,y,imgFile,resFile='NA',outPath,cropSize=100,cropDate=c(
 #   cropDate (Vector, Integer) - date range of creasting images
 #   comp (Vector, Integer) - composit of the output preview image
 #   stretch (Vector, Integer) - stretch of the output preview image
+#   mark (Boolean) - mark the center pixel or not
+#   markSize (Integer) - size of mark
+#   maskBand (Integer) - mask band id
+#   maskValue (Integer) - value to mask
 #
 # Output Arguments:
 #   r (Integer) - 0: Successful
@@ -221,7 +237,7 @@ crop_pixel <- function(x,y,imgFile,resFile='NA',outPath,cropSize=100,cropDate=c(
 #   3.Run script to create preview images
 #
 batch_crop_pixel <- function(pxlFile,imgFile,resFile='NA',outPath,cropSize=100,cropDate=c(1000000,3000000),
-                       comp=c(5,4,3),stretch=c(0,5000),mark=T,maskBand=0,maskValue=0,job=c(1,1)){
+                       comp=c(5,4,3),stretch=c(0,5000),mark=T,maskSize=7,maskBand=0,maskValue=0,job=c(1,1)){
 
   # check output path
   if(!file.exists(outPath)){

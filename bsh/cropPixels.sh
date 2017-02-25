@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # Submit job to crop pixel
-# Input Arguments: 
+# Input Arguments:
 #		-cSize crop size (optional)
 #		-cDate crop date range (optional)
 #		-comp compisot (optional)
 #		-stch stretch (optional)
 #		-noMark do not mark the pixel (optional)
+#		-mark mark size (optional)
 #		-mask use mask filter (optional)
 #		-job jobs (optional)
 #		-f pixel file (batch)
@@ -54,6 +55,7 @@ comp3=3
 stretch1=0
 stretch2=5000
 mark=T
+markSize=7
 maskBand=0
 maskValue=0
 njob=1
@@ -91,6 +93,10 @@ while [[ $# > 0 ]]; do
 			;;
 		-noMark)
 			mark=F
+			;;
+		-mark)
+			markSize=$2
+			shift
 			;;
 		-mask)
 			maskBand=$2
@@ -131,9 +137,9 @@ while [[ $# > 0 ]]; do
 done
 
 if [ $FUNC = "single" ]; then
-		COMMAND='crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$resFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark','$maskBand','$maskValue')'
+		COMMAND='crop_pixel('$cPixel1','$cPixel2',"'$iFile'","'$resFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark','$markSize','$maskBand','$maskValue')'
 elif [ $FUNC = "batch" ]; then
-		COMMAND='batch_crop_pixel("'$cFile'","'$iFile'","'$resFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark','$maskBand','$maskValue',c('$njob','$thisjob'))'
+		COMMAND='batch_crop_pixel("'$cFile'","'$iFile'","'$resFile'","'$oPath'",'$cSize,'c('$cDate1','$cDate2'),c('$comp1','$comp2','$comp3'),c('$stretch1','$stretch2'),'$mark','$markSize','$maskBand','$maskValue',c('$njob','$thisjob'))'
 else
 		echo 'unknown option'
 fi

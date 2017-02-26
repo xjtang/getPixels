@@ -176,6 +176,7 @@ crop_pixel <- function(x,y,imgFile,resFile='NA',outPath,cropSize=100,cropDate=c(
     if(!(resFile=='NA')){
       resImg <- stack(resFile)
       resBlock <- getValuesBlock(resImg,x1,cropSize,y1,cropSize)
+      resBlock <- matrix(resBlock,nrow=cropSize,ncol=cropSize,byrow=TRUE)
       for(j in 1:cropSize){
         for(k in 1:cropSize){
           if((resBlock[j,k]>0)&(resBlock[j,k]<=image[i,1])){

@@ -60,7 +60,7 @@ maskBand=0
 maskValue=0
 njob=1
 thisjob=1
-resfile=NA
+resFile=NA
 
 while [[ $# > 0 ]]; do
 
